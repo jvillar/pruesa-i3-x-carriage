@@ -2,6 +2,7 @@ use <./nut_attachment.scad>;
 use <./bearing_holder.scad>;
 use <./tensioner_holder.scad>;
 use <./rod_block.scad>;
+use <./oshw.scad>;
 
 module x_end(
                 height = 60,
@@ -23,7 +24,7 @@ module x_end(
                 nut_holes_radial_separation=8,
                 nut_n_holes=4,
                 nut_hole_size=3.5,
-                tensioner_holder_wall_size=3,
+                tensioner_holder_wall_size=4,
                 tensioner_holder_hole_size=3,
                 pulley_screw_head_diameter=20,
                 ) {
@@ -76,14 +77,22 @@ module x_end(
         rod_block(width=width, height=x_rods_height, depth=main_body_width, rod_diameter=rod_diameter);
     
     translate([bearing_width/2-tensioner_holder_wall_size/2, zx_rod_sep, x_rods_height])    
-    tensioner_holder(
-                     width=width-tensioner_holder_wall_size,
-                     height=x_rods_z_distance-x_rods_height,
-                     depth=main_body_width,
-                     wall_size=tensioner_holder_wall_size,
-                     tensioner_hole_size=tensioner_holder_hole_size,
-                     pulley_screw_head_diameter=pulley_screw_head_diameter,               back_face=true,
-                     back_pulley_screw_head_diameter=0);
+        difference() {
+            tensioner_holder(
+                             width=width-tensioner_holder_wall_size,
+                             height=x_rods_z_distance-x_rods_height,
+                             depth=main_body_width,
+                             wall_size=tensioner_holder_wall_size,
+                             tensioner_hole_size=tensioner_holder_hole_size,
+                             pulley_screw_head_diameter=pulley_screw_head_diameter,               back_face=true,
+                             back_pulley_screw_head_diameter=0);
+            logo_space = width  - bearing_width - pulley_screw_head_diameter/2;
+            translate([tensioner_holder_wall_size/2-bearing_width-logo_space/2, -main_body_width/2-tensioner_holder_wall_size/2+2, (x_rods_z_distance-x_rods_height)/2])
+            rotate([90, 0, 0])
+            //cube([logo_space, logo_space, logo_space], center=true);
+        oshw_symbol(d=0.9*logo_space/2, height=tensioner_holder_wall_size/2);
+        }
+
 }
     
 
@@ -112,7 +121,7 @@ x_end(
                 nut_holes_radial_separation=8,
                 nut_n_holes=4,
                 nut_hole_size=3.5,
-                tensioner_holder_wall_size=2,
+                tensioner_holder_wall_size=4,
                 tensioner_holder_hole_size=3,
                 pulley_screw_head_diameter=20
                 );

@@ -1,6 +1,7 @@
 use <./nut_attachment.scad>;
 use <./bearing_holder.scad>;
-use <./tensioner_holder.scad>;
+use <./tensioner_holder.scad>
+use <./x_motor_attachment.scad>;;
 use <./rod_block.scad>;
 
 module x_motor(
@@ -25,11 +26,27 @@ module x_motor(
                 nut_hole_size=3.5,
                 tensioner_holder_wall_size=3,
                 tensioner_holder_hole_size=3,
-                pulley_screw_head_diameter=20) {
+                pulley_screw_head_diameter=20,
+                motor_x_offset=5,
+                motorshaft_hole_diameter=30,
+                front_motor=false,
+                x_endstop=true,
+                x_endstop_screw_size=2.5,
+                x_endstop_screw_sep= 9.5) {
 
-    translate([-bearing_width/2, zx_rod_sep,  ])
-
-    motor_holder(width=60, height=height, depth=main_body_width);
+    motor_width = 43;
+    translate([-bearing_width/2-motor_width /2-motor_x_offset, zx_rod_sep, height/2 ])
+    mirror()    
+        x_end_motor_attachment(
+                                   width=motor_width,
+                                   height=height, 
+                                   depth=main_body_width,
+                                   x_offset=motor_x_offset,
+                                   screw_hole_size=3.6,
+                                   screw_head_size=6.3,
+                                   screw_head_depth=3,
+                                   shaft_hole_diameter=motorshaft_hole_diameter,
+                                   front_motor=front_motor);
 
     bearing_width = bearing_diameter+2*bearing_holder_wall_size;
     bearing_xrods_gap = (zx_rod_sep-bearing_diameter/2-main_body_width/2);
@@ -73,7 +90,7 @@ module x_motor(
     x_rods_z_distance = x_rod_sep;
     x_rods_height = x_rods_z_offset * 2;
     translate([width/2-bearing_width/2, zx_rod_sep, x_rods_z_offset ])
-        rod_block(width=width, height=x_rods_height, depth=main_body_width, rod_diameter=rod_diameter);
+        rod_block(width=width, height=x_rods_height, depth=main_body_width, rod_diameter=rod_diameter, endstop=x_endstop, endstop_screw_size=x_endstop_screw_size , endstop_screw_sep=x_endstop_screw_sep);
         
     translate([width/2-bearing_width/2, zx_rod_sep, x_rods_z_offset+x_rods_z_distance])
         rod_block(width=width, height=x_rods_height, depth=main_body_width, rod_diameter=rod_diameter);
@@ -121,7 +138,7 @@ x_motor(
                 nut_holes_radial_separation=8,
                 nut_n_holes=4,
                 nut_hole_size=3.5,
-                tensioner_holder_wall_size=2,
+                tensioner_holder_wall_size=4,
                 tensioner_holder_hole_size=3,
                 pulley_screw_head_diameter=20
                 );
