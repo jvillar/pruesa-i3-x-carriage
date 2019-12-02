@@ -1,8 +1,8 @@
-use <./nut_attachment.scad>;
-use <./bearing_holder.scad>;
-use <./tensioner_holder.scad>;
-use <./rod_block.scad>;
-use <./oshw.scad>;
+use <lib/nut_attachment.scad>;
+use <lib/bearing_holder.scad>;
+use <lib/tensioner_holder.scad>;
+use <lib/rod_block.scad>;
+use <lib/oshw.scad>;
 
 module x_end(
                 height = 60,
@@ -46,7 +46,6 @@ module x_end(
                     hole_size=bearing_hole_size
                     );
     // nut
-    nut_attachment_width = nut_holder_outer_diameter;
     nut_attachment_xrods_gap = (zx_rod_sep-nut_holder_outer_diameter/2-main_body_width/2);
     nut_attachment_bearing_holder_sep = z_rod_sep-nut_holder_outer_diameter/2-bearing_width/2;
     translate([-z_rod_sep, 0, 0])
@@ -100,10 +99,9 @@ bearing_diameter_tolerance = 0.5;
 nut_holder_inner_diameter_tolerance = 0.5;
 rod_diameter_tolerance = 0.3;
     
-x_end(
-                width=50, 
-                extra_width=0, 
+x_end( 
                 height = 59,
+                extra_width=0,
                 z_rod_sep=27,
                 x_rod_sep=45,
                 zx_rod_sep=22,
