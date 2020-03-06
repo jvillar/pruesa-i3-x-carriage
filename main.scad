@@ -1,5 +1,5 @@
 use <extruder.scad>
-use <extruder.scad>
+use <sensor_mount.scad>
 use <x_end_motor.scad>
 use <x_end_idler.scad>
 use <lib/nema17.scad>
@@ -9,18 +9,18 @@ use <lib/e3d_v6.1.scad>
 /* [Main options] */
 
 // What would you like to see?
-part = "assembly"; // [assembly:Full assembly,lh_print_all:Print all extruder parts at once -left hand-,rh_print_all:Print all extruder parts at once -right hand-, base:Print extruder base, lh_holder:Print extruder holder -left hand-, rh_holder:Print extruder holder -right hand-, lh_cover:Print extruder cover -left hand-, rh_cover:Print extruder cover -right hand-, lh_lever:Print extruder lever -left hand-, rh_lever:Print extruder lever -right hand-, lh_top_plate:Print extruder top plate -left hand-, rh_top_plate:Print extruder top plate -right hand-, carriage:Print carriage, duct: Fan duct, xendm: X end motor, xendi: X end idler, xendt: X end tensioner]
+part = "assembly"; // [assembly:Full assembly,lh_print_all:All extruder parts at once -left hand-,rh_print_all:All extruder parts at once -right hand-, base:Extruder base, lh_holder:Extruder holder -left hand-, rh_holder:Extruder holder -right hand-, lh_cover:Extruder cover -left hand-, rh_cover:Extruder cover -right hand-, lh_lever:Extruder lever -left hand-, rh_lever:Extruder lever -right hand-, lh_top_plate:Extruder top plate -left hand-, rh_top_plate:Extruder top plate -right hand-, lh_duct: Fan duct -left hand-, rh_duct: Fan duct -right hand-, carriage:Carriage, sensor:Sensor mount, xendm: X end motor, xendi: X end idler, xendt: X end tensioner]
 // rounded corners radius
 fillet = 2.5; // [0:0.1:2.5]
 
 // separation between rods in x axis
-x_rods_separation=45; // [0:1:100]
+x_rods_separation=45; // [0:0.1:100] // 45.5
 
 // separation between rods in z axis
-z_rods_separation=27; // [0:1:100]
+z_rods_separation=27; // [0:0.1:100]
 
 // separation between rods in x and z axis
-xz_rods_separation=22; // [0:1:100]
+xz_rods_separation=22; // [0:0.1:100]
 
 // diameter of rods
 rod_diameter=8; // [0:0.1:30]
@@ -82,31 +82,31 @@ bearing_height = 4; // [0:0.1:20]
 
 /* [Extruder base mounting holes] */
 // Top row holes -vertical position-
-base_holes_toprow_top = 23; // [0:100]
+base_holes_toprow_top = 22; // [0:100]
 // Top row holes -separation-
-base_holes_toprow_spacing = 20; // [0:100]
+base_holes_toprow_spacing = 0; // [0:100]
 // Middle row holes -vertical position-
-base_holes_midrow_top = 30; // [0:100]
+base_holes_midrow_top = 34; // [0:100]
 // Middle row holes -spacing-
 base_holes_midrow_spacing = 0; // [0:100]
 // Bottom row holes -vertical position-
-base_holes_bottomrow_top = 41; // [0:100]
+base_holes_bottomrow_top = 40; // [0:100]
 // Bottom row holes -spacing-
-base_holes_bottomrow_spacing = 0; // [0:100]
+base_holes_bottomrow_spacing = 21; // [0:100]
 
 /* [Extruder dimensions] */
 cover_depth = 15; // [12:100]
 
 // base height
-base_height = 33; // [0:100]
+base_height = 30; // [0:100]
 
-carriage_to_filament_y_spacing = 35; //[18:100]
-motor_base_to_hotend_z_spacing= 15; //[13:0.1:100]
+carriage_to_filament_y_spacing = 30; //[18:100]
+motor_base_to_hotend_z_spacing= 15; //[12.8:0.1:100]
 
 /* [Carriage] */
 
-carriage_top_bearings_separation = 24; // [0:1:30]
-carriage_bottom_bearings_separation = 24; // [0:1:30]
+carriage_top_bearings_separation = 30; // [0:1:100]
+carriage_bottom_bearings_separation = 0; // [0:1:100]
 carriage_bearing_diameter = 15; //[10:0.1:40]
 carriage_bearing_length = 24; //[10:0.1:100]
 carriage_bearing_holder_length = 15.3; //[10:0.1:100]
@@ -120,6 +120,33 @@ fan_outlet_height = 3;// [0:1:10]
 fan_outlet_angle = 0; // [0:1:90]
 fan_tip_length = 15; // [0:1:30]
 fan_tip_angle = 80; // [0:1:90]
+
+/* [Sensor options] */
+
+//type of support 
+sensor_type="bltouch"; // [bltouch:Bl Touch, round:Round sensor]
+
+// 90º rotated bltouch
+sensor_bltouch_rotated=true;
+
+// Inner diameter for a round sensor
+sensor_round_inner_diameter=18;
+
+// Outer diameter for a round sensor
+sensor_round_outer_diameter=30;
+
+// Style of the arm reinforcement
+sensor_arm_style = "reinforced";  // [elephant: Elephant, reinforced: Reinforced, straight: Straight]
+
+// Height of the arm
+sensor_z_offset = 14.6; //[0:0.1:100]
+
+// depth of the arm
+sensor_y_offset = 16.5; //[0:0.1:100]
+
+// Thickness of the horizontal section of the arm (default: 4.5)
+sensor_arm_horizontal_thickness = 4; //[2:0.1:15]
+
 
 
 /* [X ends] */
@@ -204,6 +231,14 @@ main(
     fan_outlet_angle = fan_outlet_angle,
     fan_tip_length = fan_tip_length,
     fan_tip_angle = fan_tip_angle,
+    sensor_type = sensor_type,
+    sensor_bltouch_rotated = sensor_bltouch_rotated,
+    sensor_round_inner_diameter = sensor_round_inner_diameter,
+    sensor_round_outer_diameter = sensor_round_outer_diameter,
+    sensor_arm_style = sensor_arm_style,
+    sensor_z_offset = sensor_z_offset,
+    sensor_y_offset = sensor_y_offset,
+    sensor_arm_horizontal_thickness = sensor_arm_horizontal_thickness,
     x_end_height = x_end_height,
     x_end_extra_width = x_end_extra_width,
     x_end_main_body_width = x_end_main_body_width,
@@ -284,6 +319,14 @@ module main(
     fan_outlet_angle,
     fan_tip_length,
     fan_tip_angle,
+    sensor_type,
+    sensor_bltouch_rotated,
+    sensor_round_inner_diameter,
+    sensor_round_outer_diameter,
+    sensor_arm_style,
+    sensor_z_offset,
+    sensor_y_offset,
+    sensor_arm_horizontal_thickness,
     x_end_height,
     x_end_extra_width,
     x_end_main_body_width,
@@ -370,6 +413,14 @@ module main(
             fan_outlet_angle = fan_outlet_angle,
             fan_tip_length = fan_tip_length,
             fan_tip_angle = fan_tip_angle,
+            sensor_type = sensor_type,
+            sensor_bltouch_rotated = sensor_bltouch_rotated,
+            sensor_round_inner_diameter = sensor_round_inner_diameter,
+            sensor_round_outer_diameter = sensor_round_outer_diameter,
+            sensor_arm_style = sensor_arm_style,
+            sensor_z_offset = sensor_z_offset,
+            sensor_y_offset = sensor_y_offset,
+            sensor_arm_horizontal_thickness = sensor_arm_horizontal_thickness,
             x_end_height = x_end_height,
             x_end_extra_width = x_end_extra_width,
             x_end_main_body_width = x_end_main_body_width,
@@ -413,8 +464,9 @@ module main(
 		print_cover = part=="rh_print_all" || part=="lh_print_all" || part=="rh_cover" || part=="lh_cover";
 		print_lever = part=="rh_print_all" || part=="lh_print_all" || part=="rh_lever" || part=="lh_lever";
 		print_top_plate = part=="rh_print_all" || part=="lh_print_all" || part=="rh_top_plate" || part=="lh_top_plate";
-		
-		mirrored = (part=="lh_print_all" || part=="lh_holder" || part=="lh_cover" || part=="lh_lever" || part=="lh_top_plate") ? 1 : 0;
+		print_duct =  part=="rh_print_all" || part=="lh_print_all" || part=="rh_duct" || part=="lh_duct";
+        print_sensor = part=="sensor";
+		mirrored = (part=="lh_print_all" || part=="lh_holder" || part=="lh_cover" || part=="lh_lever" || part=="lh_top_plate" || part=="lh_duct") ? 1 : 0;
 		print(
 			mirrored = mirrored,
 			show_base = print_base,
@@ -426,6 +478,8 @@ module main(
             show_xend_motor = print_xend_motor,
             show_xend_idler = print_xend_idler,
             show_xend_tensioner = print_xend_tensioner,
+            show_duct = print_duct,
+            show_sensor = print_sensor,
 			dual_extruder = dual_extruder,
 			base_holes_toprow_top = base_holes_toprow_top,
 			base_holes_toprow_spacing = base_holes_toprow_spacing,
@@ -472,6 +526,14 @@ module main(
             fan_outlet_angle = fan_outlet_angle,
             fan_tip_length = fan_tip_length,
             fan_tip_angle = fan_tip_angle,
+            sensor_type = sensor_type,
+            sensor_bltouch_rotated = sensor_bltouch_rotated,
+            sensor_round_inner_diameter = sensor_round_inner_diameter,
+            sensor_round_outer_diameter = sensor_round_outer_diameter,
+            sensor_arm_style = sensor_arm_style,
+            sensor_z_offset = sensor_z_offset,
+            sensor_y_offset = sensor_y_offset,
+            sensor_arm_horizontal_thickness = sensor_arm_horizontal_thickness,
             x_end_height = x_end_height,
             x_end_extra_width = x_end_extra_width,
             x_end_main_body_width = x_end_main_body_width,
@@ -518,6 +580,8 @@ module print(
     show_xend_motor = false,
     show_xend_idler = false,
     show_xend_tensioner = false,
+    show_duct = true,
+    show_sensor = true,
 	dual_extruder = false, //use two extruders
 	base_holes_toprow_top = 24, // top row top
 	base_holes_toprow_spacing = 20, // top row spacing
@@ -564,6 +628,14 @@ module print(
     fan_outlet_angle = 0,
     fan_tip_length = 15,
     fan_tip_angle = 80,
+    sensor_type = "bltouch",
+    sensor_bltouch_rotated = false,
+    sensor_round_inner_diameter = 18,
+    sensor_round_outer_diameter = 30,
+    sensor_arm_style = "reinforced",
+    sensor_z_offset = 60,
+    sensor_y_offset = 30,
+    sensor_arm_horizontal_thickness = 10,
     x_end_height=60,
     x_end_extra_width=0,
     x_end_main_body_width=18,
@@ -677,6 +749,23 @@ module print(
 						);
 		}
 
+		translate([50+xadd+2*width, 0,0])
+		{   
+			translate([0, 0, cover_depth])
+				//rotate([-90, 180, 0])
+					if (show_duct)
+                    fan_duct(
+                        fan_elevation = fan_extra_height,
+                        outlet_width = fan_outlet_width,
+                        outlet_height = fan_outlet_height,
+                        tip_length = fan_tip_length,
+                        angle = fan_tip_angle,
+                        automatic_outlet_angle = false,
+                        outlet_angle = fan_outlet_angle
+                    );
+
+		}
+        
         translate([0, -base_height- motor_to_hotend_yoffset, 0])
 			rotate([-90, 0, 0])
 				if (show_carriage)
@@ -696,7 +785,8 @@ module print(
                         carriage_bearing_holder_length = carriage_bearing_holder_length,
                         carriage_bearing_holder_wall_size = carriage_bearing_holder_wall_size,
                         carriage_bearing_holder_holes = carriage_bearing_holder_holes,
-                        x_rods_separation = x_rods_separation
+                        x_rods_separation = x_rods_separation,
+                        rod_diameter=rod_diameter
 					);
         if (show_xend_motor)
             x_end_motor(
@@ -758,8 +848,30 @@ module print(
                 tensioner_holder_wall_size=x_end_tensioner_holder_wall_size,
                 tensioner_holder_hole_size=x_end_tensioner_holder_hole_size,
                 pulley_screw_head_diameter=x_end_pulley_screw_head_diameter);
+                
+        if (show_sensor)
+            translate([0, 0, sensor_z_offset])
+                sensor_mount(
+                    sensor_type = sensor_type,
+                    bltouch_rotated = sensor_bltouch_rotated,
+                    round_sensor_inner_diameter = sensor_round_inner_diameter,
+                    round_sensor_outer_diameter = sensor_round_outer_diameter,
 
+                    arm_style = sensor_arm_style,
+                    arm_width = 12,
+                    sensor_z_offset = sensor_z_offset,
+                    sensor_y_offset = sensor_y_offset,
+                    arm_vertical_thickness = 4.5,
+                    arm_horizontal_thickness = sensor_arm_horizontal_thickness,
 
+                    mount_width = dual_extruder ? 34 : 32.5,  
+                    mount_height = motor_to_hotend_yoffset, 
+                    mount_thickness = 4.5,
+                    mount_slots = 2,
+                    mount_slot_separation = dual_extruder ? 22.5 : 20,
+                    mount_slot_length = motor_to_hotend_yoffset-10,
+                    screw_head_diameter = 5.5, 
+                    screw_hole_diameter = 2.8);
 
 	}
 }
@@ -813,6 +925,14 @@ module assembly(
     fan_outlet_angle = 0,
     fan_tip_length = 15,
     fan_tip_angle = 80,
+    sensor_type = "bltouch",
+    sensor_bltouch_rotated = false,
+    sensor_round_inner_diameter = 18,
+    sensor_round_outer_diameter = 30,
+    sensor_arm_style = "reinforced",
+    sensor_z_offset = 60,
+    sensor_y_offset = 30,
+    sensor_arm_horizontal_thickness = 10,
     x_end_height=60,
     x_end_extra_width=0,
     x_end_main_body_width=18,
@@ -848,8 +968,8 @@ module assembly(
 	base_w = dual_extruder ? width*2 : width;
 	xadd = dual_extruder ? width/2 : 0;
 
-	top_width = max(carriage_bearing_length, carriage_bearing_holder_length)+carriage_top_bearings_separation;
-	bottom_width = max(carriage_bearing_length, carriage_bearing_holder_length)+carriage_bottom_bearings_separation;
+	top_width = max(carriage_bearing_length, carriage_bearing_holder_length)+carriage_top_bearings_separation+2*fillet;
+	bottom_width = max(carriage_bearing_length, carriage_bearing_holder_length)+carriage_bottom_bearings_separation+2*fillet;
 	middle_width = max(base_holes_toprow_spacing, base_holes_midrow_spacing, base_holes_bottomrow_spacing)+15;
 	carriage_width = max(base_w, top_width, bottom_width, middle_width);
     carriage_offset = ((x_ends_distance - carriage_width)/100)*(extruder_position-50);
@@ -888,8 +1008,37 @@ module assembly(
                         carriage_bearing_holder_length = carriage_bearing_holder_length,
                         carriage_bearing_holder_wall_size = carriage_bearing_holder_wall_size,
                         carriage_bearing_holder_holes = carriage_bearing_holder_holes,
-                        x_rods_separation = x_rods_separation
+                        x_rods_separation = x_rods_separation,
+                        rod_diameter=rod_diameter
                     );
+	translate([0, -cover_depth,motor_to_hotend_yoffset/2]) {
+            sensor_mount(
+                sensor_type = sensor_type,
+                bltouch_rotated = sensor_bltouch_rotated,
+                round_sensor_inner_diameter = sensor_round_inner_diameter,
+                round_sensor_outer_diameter = sensor_round_outer_diameter,
+
+                arm_style = sensor_arm_style,
+                arm_width = 12,
+                sensor_z_offset = sensor_z_offset,
+                sensor_y_offset = sensor_y_offset,
+                arm_vertical_thickness = 4.5,
+                arm_horizontal_thickness = sensor_arm_horizontal_thickness,
+
+                mount_width = dual_extruder ? 34 : 32.5,  
+                mount_height = motor_to_hotend_yoffset, 
+                mount_thickness = 4.5,
+                mount_slots = 2,
+                mount_slot_separation = dual_extruder ? 22.5 : 20,
+                mount_slot_length = motor_to_hotend_yoffset-10,
+                screw_head_diameter = 5.5, 
+                screw_hole_diameter = 2.8);
+            if(sensor_type == "bltouch")
+                color("grey")
+                    translate([0,-sensor_y_offset,-sensor_z_offset])
+                        rotate([180,0,sensor_bltouch_rotated ? 0 : 90])
+                            import("lib/bltouch_dummy.stl");
+    }
 //        color("grey")
 //                translate([-(base_w/2+7.5),-18,-15.5])
 //                    rotate([180,90,0])

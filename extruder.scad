@@ -98,15 +98,26 @@ module carriage(
 	carriage_bearing_holder_length = 15.3,
 	carriage_bearing_holder_wall_size = 2,
 	carriage_bearing_holder_holes = 0,
-	x_rods_separation = 45
+	x_rods_separation = 45,
+    rod_diameter=8
 	)
 {
-	top_width = max(carriage_bearing_length, carriage_bearing_holder_length)+carriage_top_bearings_separation;
-	bottom_width = max(carriage_bearing_length, carriage_bearing_holder_length)+carriage_bottom_bearings_separation;
+	top_width = max(42.5, max(carriage_bearing_length, carriage_bearing_holder_length)+carriage_top_bearings_separation+fillet*2);
+	bottom_width = max(carriage_bearing_length, carriage_bearing_holder_length)+carriage_bottom_bearings_separation+fillet*2;
 	middle_width = max(holes_spacing1, holes_spacing2, holes_spacing3)+15;
 	width = max(42.5, top_width, bottom_width, middle_width);
-	height = x_rods_separation+carriage_bearing_diameter+2*carriage_bearing_holder_wall_size;
-
+	height = x_rods_separation+carriage_bearing_diameter+4;
+    height_top = height /2 + 7;
+    height_bottom = height - height_top;
+    bearing_y = -8-carriage_bearing_diameter/2+((carriage_bearing_diameter-rod_diameter)/2)-0.5;
+    top_bearing_z = motor_to_hotend_yoffset-carriage_bearing_diameter/2-2;
+    bottom_bearing_z = top_bearing_z - x_rods_separation;
+    bearings = [
+        [ carriage_top_bearings_separation/2, bearing_y, top_bearing_z],
+        [-carriage_top_bearings_separation/2, bearing_y, top_bearing_z],
+        [ carriage_bottom_bearings_separation/2, bearing_y, bottom_bearing_z],
+        [-carriage_bottom_bearings_separation/2, bearing_y, bottom_bearing_z]
+    ];
 	difference()
 	{
 		union()
@@ -117,42 +128,40 @@ module carriage(
 			//	cube([width,20, 1]);
 			//translate([-width/2, -20, -height/2+motor_to_hotend_yoffset-5]) 
 			//	cube([width,20, 1]);
-			translate([-width/2, -8, -height+motor_to_hotend_yoffset]) 
-				rounded_cube(width, 8, height, fillet, fillet, fillet);
-			translate([-width/2+2.2, -8, -height/2+3.5])
+			translate([-width/2, -8, -height_top+motor_to_hotend_yoffset]) 
+				rounded_cube(width, 8, height_top, fillet, fillet, fillet);
+            translate([-bottom_width/2, -8, -height+motor_to_hotend_yoffset]) 
+				rounded_cube(bottom_width, 8, height_top, fillet, fillet, fillet);
+			translate([-width/2+15.7, -8, motor_to_hotend_yoffset-height/2+1])
 				rotate([90,0,0])
 					belt_clamp();
 			mirror([1,0,0])
-				translate([-width/2+2.2, -8, -height/2+3.5])
+				translate([-width/2+15.7, -8, motor_to_hotend_yoffset-height/2+1])
 					rotate([90,0,0])
 						belt_clamp();
-			// bearing holders
-			bearing_y = -8-carriage_bearing_diameter/2;
-			top_bearing_z = motor_to_hotend_yoffset-carriage_bearing_diameter/2-carriage_bearing_holder_wall_size;
-			bottom_bearing_z = top_bearing_z - x_rods_separation;
-			bearings = [
-				[ carriage_top_bearings_separation/2-carriage_bearing_holder_length/2, bearing_y, top_bearing_z],
-				[-carriage_top_bearings_separation/2-carriage_bearing_holder_length/2, bearing_y, top_bearing_z],
-				[ carriage_bottom_bearings_separation/2-carriage_bearing_holder_length/2, bearing_y, bottom_bearing_z],
-				[-carriage_bottom_bearings_separation/2-carriage_bearing_holder_length/2, bearing_y, bottom_bearing_z]
-			];
-			for(bearing = bearings)
-				translate([bearing[0], bearing[1], bearing[2]])
-					rotate([0,90,0])
-						bearing_holder(
-							bearing_diameter=carriage_bearing_diameter,
-							wall_size=carriage_bearing_holder_wall_size, 
-							height=carriage_bearing_holder_length,
-							y_offset=8,
-							gap_width=carriage_bearing_holder_wall_size,
-							tab_width=carriage_bearing_holder_wall_size,
-							n_holes=carriage_bearing_holder_holes,
-							hole_size=1
-						);
+            // bearing holders
+            for(bearing = bearings)
+                translate([bearing[0]-(carriage_bearing_holder_length-4)/2-0.5, bearing[1], bearing[2]-carriage_bearing_diameter/2-2])
+                    cube([carriage_bearing_holder_length-3, carriage_bearing_diameter/2, carriage_bearing_diameter+4]);
+		}
+        // bearing gaps
+        for(bearing = bearings)
+            translate([bearing[0], bearing[1], bearing[2]])
+                rotate([0,90,0])
+                    bearing(
+                        length = carriage_bearing_length,
+                        inner_diameter = 0,
+                        outer_diameter = carriage_bearing_diameter,
+                        groove_distance = carriage_bearing_holder_length,
+                        groove_width = 0.75,
+                        groove_depth = 0.4,
+                        inserts = true,
+                        wall_size = carriage_bearing_holder_wall_size
+                    );
 
 				
 			
-		}
+
 
 		if (holes_top1!=undef)
 		{
@@ -582,7 +591,7 @@ module hotend_mount(prometheus=false)
 	d2 = 12.2; // 12
 	d3 = 16.5; // 16
     translate([0,0,-1])
-#	cylinder(d=4.2, h=47, $fn=64);
+        cylinder(d=4.2, h=47, $fn=64);
 	translate([0,0,h3/2])
 		cylinder(d=d3, h=h3*h_tolerance, center=true, $fn=64);
 	translate([0,0,h3+h2/2])
@@ -660,18 +669,18 @@ module screw_holes_main(
 	cover_depth = 16
 	)
 {	
-    holes_z = motor_to_hotend_yoffset/2 ;
+	holes_z = motor_to_hotend_yoffset/2 ;
 	translate([width/2-4.5, -cover_depth, holes_z])
 		rotate([-90, 0, 0])
 		{
 			cylinder(r = 1.6, h = 50, $fn=32);
-			cylinder(r = 3.2, h = 11, $fn=32, center=true);
+			cylinder(r = 3.2, h = 17, $fn=32, center=true);
 		}
 	translate([-width/2+4.5, -cover_depth, holes_z])
 		rotate([-90, 0, 0])
 		{
 			cylinder(r = 1.6, h = 50, $fn=32);
-			cylinder(r = 3.2, h = 11, $fn=32, center=true);
+			cylinder(r = 3.2, h = 17, $fn=32, center=true);
 		}
 	translate([width/2-4.5, carriage_to_filament_zoffset-4, holes_z])
 		rotate([-90, 0, 0])

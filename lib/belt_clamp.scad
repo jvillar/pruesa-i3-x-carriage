@@ -1,41 +1,41 @@
-module belt_clamp(){
+module belt_clamp(
+    depth = 6
+    ){
     $fn=32 * 4;
     module frame(){
         hull(){
-            translate([1,5,0]) cylinder(h = 12, r = 1);
-            translate([6.5,3,0]) cylinder(h = 12, r = 1);
-            translate([12,5,0]) cylinder(h = 12, r = 1);
-            translate([12,12,0]) cylinder(h = 12, r = 1);
-            translate([6.5,12,0]) cylinder(h = 12, r = 1);
-            translate([1,10,0]) cylinder(h = 12, r = 1);
+            translate([3,2.5,0]) cylinder(h = depth, r = 3);
+            translate([14,2.5,0]) cylinder(h = depth, r = 3);
+            translate([14,14,0]) cylinder(h = depth, r = 3);
+            translate([3,14,0]) cylinder(h = depth, r = 3);
         }    
     }
     module belt_loop(){
         difference(){
-            hull(){
-                translate([6.5,1,-1]) cylinder(h = 14, r = 1);
-                translate([13.5,5.5,-1]) cylinder(h = 14, r = 5.5);
+                hull(){
+                translate([6.5,1,-1]) cylinder(h = depth*2, r = 1);
+                translate([13.5,5.5,-1]) cylinder(h = depth*2, r = 5.5);
             }
             belt_loop_hole();
         }
-        translate([-1, 0,-1]) cube([8,2,14]);
+        translate([-1, 0,-1]) cube([8,2,depth*2]);
     }
     
     module belt_loop_hole(){    
         hull(){
-            translate([9,2.5,0]) cylinder(h = 12, r = 1);
-            translate([13.5,5.5,0]) cylinder(h = 12, r = 4);
+            translate([9,2.5,0]) cylinder(h = depth, r = 1);
+            translate([13.5,5.5,0]) cylinder(h = depth, r = 4);
         }
     }
-    
-    
-    difference(){
-        union() {
-            frame();
-            translate([0,6.5,0]) belt_loop_hole();
+    mirror([0,1,0])
+        translate([-13.5,-12,0])
+        difference(){
+            union() {
+                frame();
+                translate([0,6.5,0]) belt_loop_hole();
+                }
+            translate([0,6.5,0]) belt_loop();
             }
-        translate([0,6.5,0]) belt_loop();
-        }
 }
 
 
